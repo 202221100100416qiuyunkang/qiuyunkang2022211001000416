@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name="ConfigDemoServlet",
-        value="/cofig",
+        value="/config",
         initParams={
                 @WebInitParam(name = "name1", value = "qiuyunkang"),
                 @WebInitParam(name = "studentId1", value = "202221100100416")
