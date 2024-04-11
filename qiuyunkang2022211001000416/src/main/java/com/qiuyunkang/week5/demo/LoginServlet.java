@@ -1,60 +1,87 @@
-package com.qiuyunkang.week5.demo;
+package com.Liuxiang.week5.demo;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-@WebServlet("/LoginServlet")
+@WebServlet(name = "LoginServlet", value = "/login")
 public class LoginServlet extends HttpServlet {
-    Connection con=null;
 
-    public void init() throws ServletException {
-        String driver = getServletContext().getInitParameter("driver");
-        String url = getServletContext().getInitParameter("url");
-        String username = getServletContext().getInitParameter("username");
-        String password = getServletContext().getInitParameter("password");
-
-        try {
-            Class.forName(driver);
-            con = DriverManager.getConnection(url, username, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    Connection con =null;
+    @Override
+    public void init() {
+//        String driver1 = getServletContext().getInitParameter("driver1");
+//        String url1 = getServletContext().getInitParameter("url1");
+//        String username = getServletContext().getInitParameter("username");
+//        String password = getServletContext().getInitParameter("password");
+//        con=(Connection) getServletContext().getAttribute("con");
+//        try {
+//            Class.forName(driver1);
+//            con = DriverManager.getConnection(url1, username, password);
+        con=(Connection) getServletContext().getAttribute("con");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        try {
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM usertable WHERE username=? AND password=?");
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                // 用户名和密码匹配，登录成功
-                PrintWriter out = response.getWriter();
-                out.println("Login Success!!!");
-                out.println("Welcome " + username);
-            } else {
-                // 用户名或密码错误
-                PrintWriter out = response.getWriter();
-                out.println("Username or Password Error!!!");
-            }
-        } catch (SQLException e) {
-            throw new ServletException("Error in accessing database", e);
-        }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doPost(request,response);
+//        String str = "select id,username,password,email.gender,birthdate * from usertable where username= 'Liuxiang' and password= '2022211001000413'";
+//        try {
+//            ResultSet rus=con.createStatement().executeQuery(str);
+//            PrintWriter writer=response.getWriter();
+//            if (rus.next()){
+////            writer.println("LOGIN SUCCESS !!!");
+////            writer.println("WELCOME,XiongYuXuan");}
+//              request.setAttribute("username",rus.getString("id"));
+//                request.setAttribute("password",rus.getString("password"));
+//                request.setAttribute("email",rus.getString("email"));
+//                request.setAttribute("gender",rus.getString("gender"));
+//                request.setAttribute("birthdate",rus.getString("birthdate"));
+//                request.setAttribute("username",rus.getString("id"));
+//
+//                request.getRequestDispatcher("userInfo.jsp").forward(request,response);
+//            }
+//            else{
+////                writer.println("LOGIN ERROR!!!");
+//                request.setAttribute("message","username or password error!!!");
+//                request.getRequestDispatcher("login.jsp").forward(request,response);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
-    public void destroy() {
-        // 关闭数据库连接
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username=request.getParameter("username");
+        String password=request.getParameter("password");
+//        String str = "select id,username,password,email,gender,birthdate * from usertable where username= 'Liuxiang' and password= '2022211001000413'";
+        String str = "SELECT id, username, password, email, gender, birthdate FROM usertable WHERE username = '" + username + "' AND password = '" + password + "'";
         try {
-            if (con != null) {
-                con.close();
+            ResultSet rus=con.createStatement().executeQuery(str);
+            PrintWriter writer=response.getWriter();
+            if (rus.next()){
+//            writer.println("LOGIN SUCCESS !!!");
+//            writer.println("WELCOME,");}
+                request.setAttribute("username",rus.getString("username"));
+                request.setAttribute("password",rus.getString("password"));
+                request.setAttribute("email",rus.getString("email"));
+                request.setAttribute("gender",rus.getString("gender"));
+                request.setAttribute("birthdate",rus.getString("birthdate"));
+
+                request.getRequestDispatcher("userInfo.jsp").forward(request,response);
+            }
+            else{
+//                writer.println("LOGIN ERROR!!!");
+                request.setAttribute("message","username or password error!!!");
+                request.getRequestDispatcher("login.jsp").forward(request,response);
             }
         } catch (SQLException e) {
             e.printStackTrace();

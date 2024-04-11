@@ -20,7 +20,16 @@
 <a href="index.jsp">include-week5</a>
 <br/>
 <a href="login.jsp">Login-week5</a>
-<form>
 
+    <br>
+    <form method="get" target="_blank" action="/search">
+        <h2>Welcome to My Online Shop Home Page</h2> <br>
+        <input type="text" name="txt" size=30/>
+        <select name="search">
+            <option value="baidu">Baidu</option>
+            <option value="bing">Bing</option>
+            <option value="google">Google</option>
+        </select>
+        <input type="submit" value="search"/>
     </form>
 <%@include file="footer.jsp"%>
