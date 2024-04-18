@@ -1,4 +1,7 @@
-package com.Liuxiang.week5.demo;
+package com.qiuyunkang.week5.demo;
+
+import com.qiuyunkang.dao.UserDao;
+import com.qiuyunkang.model.User;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -31,7 +34,8 @@ public class LoginServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doPost(request,response);
+        request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request,response);
+//        doPost(request,response);
 //        String str = "select id,username,password,email.gender,birthdate * from usertable where username= 'Liuxiang' and password= '2022211001000413'";
 //        try {
 //            ResultSet rus=con.createStatement().executeQuery(str);
@@ -62,29 +66,44 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username=request.getParameter("username");
         String password=request.getParameter("password");
-//        String str = "select id,username,password,email,gender,birthdate * from usertable where username= 'Liuxiang' and password= '2022211001000413'";
-        String str = "SELECT id, username, password, email, gender, birthdate FROM usertable WHERE username = '" + username + "' AND password = '" + password + "'";
+        UserDao userDao=new UserDao();
         try {
-            ResultSet rus=con.createStatement().executeQuery(str);
-            PrintWriter writer=response.getWriter();
-            if (rus.next()){
-//            writer.println("LOGIN SUCCESS !!!");
-//            writer.println("WELCOME,");}
-                request.setAttribute("username",rus.getString("username"));
-                request.setAttribute("password",rus.getString("password"));
-                request.setAttribute("email",rus.getString("email"));
-                request.setAttribute("gender",rus.getString("gender"));
-                request.setAttribute("birthdate",rus.getString("birthdate"));
+           User user= userDao.findByUsernamePassword(con,username,password);
+           if (user!=null){
+               request.setAttribute("user",user);
+               request.getRequestDispatcher("WEB-INF/views/userinfo.jsp").forward(request,response);
 
-                request.getRequestDispatcher("userInfo.jsp").forward(request,response);
-            }
-            else{
-//                writer.println("LOGIN ERROR!!!");
-                request.setAttribute("message","username or password error!!!");
-                request.getRequestDispatcher("login.jsp").forward(request,response);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+           }else{
+               request.setAttribute("message","username or password error!!!");
+               request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request,response);
+
+           }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-    }
+//        String str = "select id,username,password,email,gender,birthdate * from usertable where username= 'Liuxiang' and password= '2022211001000413'";
+//        String str = "SELECT id, username, password, email, gender, birthdate FROM usertable WHERE username = '" + username + "' AND password = '" + password + "'";
+//        try {
+//            ResultSet rus=con.createStatement().executeQuery(str);
+//            PrintWriter writer=response.getWriter();
+//            if (rus.next()){
+////            writer.println("LOGIN SUCCESS !!!");
+////            writer.println("WELCOME,");}
+//                request.setAttribute("username",rus.getString("username"));
+//                request.setAttribute("password",rus.getString("password"));
+//                request.setAttribute("email",rus.getString("email"));
+//                request.setAttribute("gender",rus.getString("gender"));
+//                request.setAttribute("birthdate",rus.getString("birthdate"));
+//
+//                request.getRequestDispatcher("userInfo.jsp").forward(request,response);
+//            }
+//            else{
+////                writer.println("LOGIN ERROR!!!");
+//                request.setAttribute("message","username or password error!!!");
+//                request.getRequestDispatcher("login.jsp").forward(request,response);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+   }
 }
